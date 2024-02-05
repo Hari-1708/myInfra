@@ -46,6 +46,6 @@ jobs:
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.RG }}
-        template: ${{ github.event.inputs.AppService}}.json
+        template: ${{ github.event.inputs.AppService}}.bicep
         parameters: ${{ github.event.inputs.AppService}}-${{ env.ENV }}.parameters.json           
            
