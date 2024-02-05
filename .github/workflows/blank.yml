@@ -18,7 +18,10 @@ on:
         options:
         - Appservice
         - windows-Appservice
-        
+
+permissions:
+      id-token: write
+      contents: read        
 
 jobs:
   deploy:
