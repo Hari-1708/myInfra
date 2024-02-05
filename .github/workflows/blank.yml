@@ -26,6 +26,7 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: '${{ github.event.inputs.environment }}'
     env:
       ENV: '${{ github.event.inputs.environment }}'
       RG: 'RG-${{ github.event.inputs.environment }}'
