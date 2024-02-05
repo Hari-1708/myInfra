@@ -10,15 +10,7 @@ on:
         options:
         - dev
         - qa
-         
-      AppService:
-        type: choice
-        description: 'Select app service to deploy'
-        required: true
-        options:
-        - appservice
-        - windows-Appservice
-
+        
 permissions:
       id-token: write
       contents: read        
@@ -53,6 +45,7 @@ jobs:
   qa:
     runs-on: ubuntu-latest
     environment: qa
+    needs: [dev]
     env:
       ENV: '${{ github.event.inputs.environment }}'
       RG: 'RG-${{ github.event.inputs.environment }}'
