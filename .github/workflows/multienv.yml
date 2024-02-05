@@ -1,0 +1,77 @@
+name: deploy bicep config
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        description: 'Select env:- dev/qa/prod'
+        required: true
+        options:
+        - dev
+        - qa
+         
+      AppService:
+        type: choice
+        description: 'Select app service to deploy'
+        required: true
+        options:
+        - appservice
+        - windows-Appservice
+
+permissions:
+      id-token: write
+      contents: read        
+
+jobs:
+  dev:
+    runs-on: ubuntu-latest
+    environment: dev
+    env:
+      ENV: '${{ github.event.inputs.environment }}'
+      RG: 'RG-${{ github.event.inputs.environment }}'
+
+    steps:
+
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v2
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{secrets.Azure_Login}}
+       
+
+    - name: Deploy Bicep template
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        resourceGroupName: ${{ env.RG }}
+        template: main.bicep
+        parameters: ${{ env.ENV }}.parameters.json
+
+  qa:
+    runs-on: ubuntu-latest
+    environment: qa
+    env:
+      ENV: '${{ github.event.inputs.environment }}'
+      RG: 'RG-${{ github.event.inputs.environment }}'
+
+    steps:
+
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v2
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{secrets.Azure_Login}}
+       
+
+    - name: Deploy Bicep template
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        resourceGroupName: ${{ env.RG }}
+        template: main.bicep
+        parameters: ${{ env.ENV }}.parameters.json     
