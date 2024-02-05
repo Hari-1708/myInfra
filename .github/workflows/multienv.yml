@@ -1,4 +1,4 @@
-name: deploy bicep config
+name: multi env deploy bicep config
 
 on:
   workflow_dispatch:
