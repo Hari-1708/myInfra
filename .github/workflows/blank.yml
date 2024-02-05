@@ -1,4 +1,4 @@
-name: Appservice
+name: deploy bicep config
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ on:
         options:
         - dev
         - qa
-        - prod  
+         
       AppService:
         type: choice
         description: 'Select app service to deploy'
@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ENV: '${{ github.event.inputs.environment }}'
-      RG: 'AppService-${{ github.event.inputs.environment }}'
+      RG: 'RG-${{ github.event.inputs.environment }}'
 
     steps:
 
@@ -46,6 +46,6 @@ jobs:
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ env.RG }}
-        template: ${{ github.event.inputs.AppService}}.bicep
-        parameters: ${{ github.event.inputs.AppService}}-${{ env.ENV }}.parameters.json           
+        template: main.bicep
+        parameters: ${{ env.ENV }}.parameters.json           
            
