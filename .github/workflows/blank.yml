@@ -1,0 +1,50 @@
+name: Appservice
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        description: 'Select env:- dev/qa/prod'
+        required: true
+        options:
+        - dev
+        - qa
+        - prod  
+      AppService:
+        type: choice
+        description: 'Select app service to deploy'
+        required: true
+        options:
+        - Appservice
+        - windows-Appservice
+        
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      ENV: '${{ github.event.inputs.environment }}'
+      RG: 'AppService-${{ github.event.inputs.environment }}'
+
+    steps:
+
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v2
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+
+    - name: Deploy Bicep template
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        resourceGroupName: ${{ env.RG }}
+        template: ./${{ env.AppService }}.json
+        parameters: ./${{ env.AppService }}-${{ env.ENV }}.parameters.json           
+           
