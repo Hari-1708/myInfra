@@ -53,6 +53,7 @@ jobs:
   qa:
     runs-on: ubuntu-latest
     environment: qa
+    needs: [dev]
     env:
       ENV: '${{ github.event.inputs.environment }}'
       RG: 'RG-${{ github.event.inputs.environment }}'
