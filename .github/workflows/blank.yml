@@ -16,7 +16,7 @@ on:
         description: 'Select app service to deploy'
         required: true
         options:
-        - Appservice
+        - appservice
         - windows-Appservice
 
 permissions:
