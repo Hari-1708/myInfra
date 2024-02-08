@@ -30,5 +30,13 @@ jobs:
       with:
         azcliversion: 2.37.0
         inlineScript: |
-            az group list --output table >> $GITHUB_STEP_SUMMARY
-                    
+            az group list --query "[].{resource:resourceGroup, name:name}" --output table >> $GITHUB_STEP_SUMMARY
+            az group list --output json >> $GITHUB_STEP_SUMMARY
+            myrg = $az group list --output table
+
+    - name: Azure CLI Action
+      uses: Azure/cli@v1.0.9
+      with:
+        azcliversion: 2.37.0
+        inlineScript: |
+            az logout
