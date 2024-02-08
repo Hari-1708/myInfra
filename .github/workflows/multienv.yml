@@ -48,7 +48,7 @@ jobs:
     needs: [dev]
     env:
       ENV: '${{ github.event.inputs.environment }}'
-      RG: 'RG-${{ github.event.inputs.environment }}'
+      RG: 'RG-${{environment }}'
 
     steps:
 
