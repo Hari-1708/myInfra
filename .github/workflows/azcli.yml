@@ -1,15 +1,8 @@
 name: AZ cli
 
 on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        type: choice
-        description: 'Select env:- dev/qa/prod'
-        required: true
-        options:
-        - dev
-        - qa
+  push
+
          
 permissions:
       id-token: write
@@ -18,10 +11,9 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: '${{ github.event.inputs.environment }}'
+    
     env:
-      ENV: '${{ github.event.inputs.environment }}'
-      RG: 'RG-${{ github.event.inputs.environment }}'
+      RG: 'RG-dev'
 
     steps:
 
