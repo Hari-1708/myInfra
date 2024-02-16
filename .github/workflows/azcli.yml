@@ -30,8 +30,8 @@ jobs:
       with:
         azcliversion: 2.37.0
         inlineScript: |
-            az group list --query "[].{name:name}" --output table >> $GITHUB_STEP_SUMMARY
-            az group list --query "[].{ location:location}" --output table >> $GITHUB_STEP_SUMMARY
+            az group list --output table >> $GITHUB_STEP_SUMMARY
+
 
 
     - name: Azure CLI Action
