@@ -1,0 +1,70 @@
+name: Build and deploy Bicep Code to Azure portal
+on: 
+  workflow_dispatch
+jobs:
+  bicep-whatif:
+    name: 'Bicep Whatif'
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Authenticate to Az CLI using OIDC
+    - name: 'Az CLI login'
+      uses: azure/login@v1
+      with:
+        creds: ${{secrets. }}
+        
+     # Checks that all Bicep configuration files adhere to a canonical format
+    - name: Bicep Lint
+      uses: Azure/cli@v1
+      with:
+        inlineScript: az bicep build -f main.bicep
+        
+    # Validate whether a template is valid at resource scope
+    - name: Bicep Validate
+      uses: Azure/cli@v1
+      with:
+        inlineScript: |
+          az deployment group validate \
+            --resource-group nagm_mykomatsu_eus_dev_rg \
+            --name validate-${{ github.run_id }} \
+            --template-file main.bicep \
+            --parameters main.parameters-dev.json
+            
+    # Preview changes
+    - name: "What-If"
+      uses: Azure/cli@v1
+      with:
+        inlineScript: |
+          az deployment group what-if \
+            --resource-group nagm_mykomatsu_eus_dev_rg \
+            --name whatif-${{ github.run_id }} \
+            --template-file main.bicep \
+            --parameters main.parameters-dev.json > whatif
+            
+            
+      # Create string output of Whatif
+    - name: Create String Output
+      id: whatif-string
+      run: |
+        WHATIF=$(cat whatif)
+        
+        delimiter="$(openssl rand -hex 8)"
+        echo "summary<<${delimiter}" >> $GITHUB_OUTPUT
+        echo "## Whatif Output" >> $GITHUB_OUTPUT
+        echo "<details><summary>Click to expand</summary>" >> $GITHUB_OUTPUT
+        echo "" >> $GITHUB_OUTPUT
+        echo '```' >> $GITHUB_OUTPUT
+        echo "$WHATIF" >> $GITHUB_OUTPUT
+        echo '```' >> $GITHUB_OUTPUT
+        echo "</details>" >> $GITHUB_OUTPUT
+        echo "${delimiter}" >> $GITHUB_OUTPUT
+    # Publish Terraform Plan as task summary
+    - name: Publish Whatif to Task Summary
+      env:
+        SUMMARY: ${{ steps.whatif-string.outputs.summary }}
+      run: |
+        echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
