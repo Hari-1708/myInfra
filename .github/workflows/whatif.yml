@@ -15,7 +15,7 @@ jobs:
     - name: 'Az CLI login'
       uses: azure/login@v1
       with:
-        creds: ${{secrets. }}
+        creds:  ${{secrets.Azure_Login}}
         
      # Checks that all Bicep configuration files adhere to a canonical format
     - name: Bicep Lint
@@ -29,10 +29,10 @@ jobs:
       with:
         inlineScript: |
           az deployment group validate \
-            --resource-group nagm_mykomatsu_eus_dev_rg \
+            --resource-group RG-qa \
             --name validate-${{ github.run_id }} \
             --template-file main.bicep \
-            --parameters main.parameters-dev.json
+            --parameters qa.parameters.json
             
     # Preview changes
     - name: "What-If"
@@ -40,10 +40,10 @@ jobs:
       with:
         inlineScript: |
           az deployment group what-if \
-            --resource-group nagm_mykomatsu_eus_dev_rg \
+            --resource-group RG-qa\
             --name whatif-${{ github.run_id }} \
             --template-file main.bicep \
-            --parameters main.parameters-dev.json > whatif
+            --parameters qa.parameters.json > whatif
             
             
       # Create string output of Whatif
